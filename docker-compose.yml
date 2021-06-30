@@ -1,0 +1,14 @@
+version: "3.1"
+
+services: 
+    
+    mysql:
+        image: mysql:8.0.25
+        container_name: mysql-java
+        ports: 
+            - 3306:3306
+        environment: 
+            MYSQL_USER: java
+            MYSQL_PASSWORD: java
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: java
