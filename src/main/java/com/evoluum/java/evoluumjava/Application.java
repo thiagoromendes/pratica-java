@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @EntityScan(basePackages = {"com.evoluum.java.evoluumjava.entidades"})
 @EnableJpaRepositories(basePackages = {"com.evoluum.java.evoluumjava.repositorio"})
-@ComponentScan(basePackages = {"com.evoluum.java.evoluumjava.servico","com.evoluum.java.evoluumjava.controlador"})
+@ComponentScan(basePackages = {"com.evoluum.java.evoluumjava.servico","com.evoluum.java.evoluumjava.controlador","com.evoluum.java.evoluumjava.excecao"})
 @SpringBootApplication
 public class Application {
 
