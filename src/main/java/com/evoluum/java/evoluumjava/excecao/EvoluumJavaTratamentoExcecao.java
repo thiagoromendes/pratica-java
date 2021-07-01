@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class EvoluumJavaTratamentoExcecao extends ResponseEntityExceptionHandler {
 
 	private static final String CONSTANT_VALIDATION_NOT_BLANK = "NotBlank";
+	private static final String CONSTANT_VALIDATION_NOT_NULL = "NotNull";
 	private static final String CONSTANT_VALIDATION_LENGTH = "Length";
 
 	@ExceptionHandler(EmptyResultDataAccessException.class)
@@ -32,12 +34,22 @@ public class EvoluumJavaTratamentoExcecao extends ResponseEntityExceptionHandler
 
 		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.NOT_FOUND, request);
 	}
-	
+
 	@ExceptionHandler(RegraDeNegocioExcepetion.class)
-	public ResponseEntity<Object> handleRegraDeNegocioExcepetion(RegraDeNegocioExcepetion ex,
-			WebRequest request) {
+	public ResponseEntity<Object> handleRegraDeNegocioExcepetion(RegraDeNegocioExcepetion ex, WebRequest request) {
 
 		String msgUsuario = ex.getMessage();
+		String msgDesenvolvedor = ex.getMessage();
+		List<Erro> erros = Arrays.asList(new Erro(msgUsuario, msgDesenvolvedor));
+
+		return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
+			WebRequest request) {
+		
+		String msgUsuario = "Recurso não encontrado";
 		String msgDesenvolvedor = ex.getMessage();
 		List<Erro> erros = Arrays.asList(new Erro(msgUsuario, msgDesenvolvedor));
 
@@ -69,6 +81,9 @@ public class EvoluumJavaTratamentoExcecao extends ResponseEntityExceptionHandler
 
 	private String tratarMensagemDeErroParaUsuario(FieldError fieldError) {
 		if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_BLANK)) {
+			return fieldError.getDefaultMessage().concat(" é obrigatório");
+		}
+		if (fieldError.getCode().equals(CONSTANT_VALIDATION_NOT_NULL)) {
 			return fieldError.getDefaultMessage().concat(" é obrigatório");
 		}
 		if (fieldError.getCode().equals(CONSTANT_VALIDATION_LENGTH)) {
